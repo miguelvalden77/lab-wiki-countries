@@ -5,25 +5,24 @@ import countriesArr from "./countries.json"
 import { Routes, Route } from 'react-router-dom';
 import CountryDetails from './components/CountryDetails';
 import {useState, useEffect} from "react"
+import Home from "./components/Home"
 import axios from "axios"
 
 
 function App() {
 
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState()
   const [isFetching, setIsFetching] = useState(true)
 
   useEffect(()=>{
 
     getData()
-    
 
-  }, [countries])
+  }, [])
 
   const getData = async ()=>{
-    const listaPaises = await fetch("https://ih-countries-api.herokuapp.com/countries")
-    const paises = await listaPaises.json()
-    setCountries(paises)
+    const listaPaises = await axios("https://ih-countries-api.herokuapp.com/countries")
+    setCountries(listaPaises.data)
     setIsFetching(false)
   }
 
@@ -31,6 +30,8 @@ function App() {
   if(isFetching === true){
     return <h5>Cargando ...</h5>
   }
+
+  console.log(countries)
   
   return (
     <div className="App">
@@ -39,10 +40,11 @@ function App() {
 
       <div className="container">
         <div className='row'>
-          <CountriesList countries={countries} />
+          <CountriesList countryList={countries} />
 
       
           <Routes>
+            <Route path='/' element={<Home/>}/>
             <Route path="/:id" element={ <CountryDetails countryList={countries} /> } />
           </Routes>
         </div>
